@@ -1,3 +1,15 @@
+/* hacer el checkbox */
+
+const parties = {
+  D: 'Democrat',
+  R: 'Republican',
+  ID: 'Independent'
+}
+
+/* para dropdown import {string} from './holamundo.mjs'
+console.log(string) y  (en el fichero donde esta la informacion) export const  string ="hola mundo"*/
+
+
 const url ="https://api.propublica.org/congress/v1/116/house/members.json"
 
 fetch(url, {
