@@ -21,7 +21,7 @@ fetch(url, {
 
 let table = document.createElement('table');
 
-/*make the headers*/
+/*make the headers of the colums*/
 
 let headersName = ['Senator Name', 'Affiliation', 'State', 'Years', 'Votes to Party'];
 for (let i = 0; i < headersName.length; i++) {
