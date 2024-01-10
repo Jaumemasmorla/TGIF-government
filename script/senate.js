@@ -1,4 +1,5 @@
-
+/*import {string} from './holamundo.mjs'
+console.log(string) y  (en el fichero donde esta la informacion) export const  string ="hola mundo"*/
 
 const url ="https://api.propublica.org/congress/v1/116/senate/members.json";
 
@@ -8,66 +9,57 @@ fetch(url, {
 })
 .then(response => response.json()) 
 .then(json => {
-    const  members = json.results[0].members;
-    console.log(members)
+    const  membersArr = json.results[0].members;
+    buildTable(membersArr)
+    
 }
     
-    ); 
+); 
 
+document.getElementById("thead").innerHTML ="";
 
+let headers = ['Name', 'Affiliation', 'State', 'Years', 'Votes to Party'];
 
-
-/*create table*/
-
-let table = document.createElement('table');
-
-/*make the headers of the colums*/
-
-let headersName = ['Senator Name', 'Affiliation', 'State', 'Years', 'Votes to Party'];
-for (let i = 0; i < headersName.length; i++) {
-    let headers = document.createElement('th');
-    headers.textContent = headersName[i];
-    table.appendChild(headers);
+for (let i = 0; i < headers.length; i++){
+   let headersRow = document.createElement('th');
+    headersRow.textContent = headers[i];
+    document.getElementById("thead").append(headersRow);
 }
 
-/* make the rows*/
-
-for (i = 0; i < members.length; i++){
 
 
+function buildTable(membersArr){
 
-   
+
+document.getElementById("tbody").innerHTML = "";
+for (let i = 0; i < membersArr.length; i++){
+
 let row = document.createElement('tr');
 
-/*make the cells*/
+let link = document.createElement("a");
 
-    let senatorName = document.createElement('td');
-    senatorName.textContent = members[i].first_name + ' ' + members[i].last_name;
-    
-    let affiliation = document.createElement('td');
-    affiliation.textContent = members[i].party;
-    
-    let state = document.createElement('td');
-    state.textContent = memebers[i].state;
-    
-    let years = document.createElement('td');
-    years.textContent = members[i].seniority;
-    
-    let votesToParty = document.createElement('td');
-    votesToParty.textContent = members[i].votes_with_party_pct;
+link.textContent = membersArr[i].first_name + " " + (membersArr[i].middle_name || "") + " " + membersArr[i].last_name;
 
-    row.appendChild(senatorName);
-    row.appendChild(affiliation);
-    row.appendChild(state);
-    row.appendChild(years);
-    row.appendChild(votesToParty);
+link.setAttribute("href", membersArr[i].url)
 
+row.insertCell().append(link);
 
+row.insertCell().innerHTML = membersArr[i].party;
 
-table.appendChild(row);
+row.insertCell().innerHTML = membersArr[i].state;
+
+row.insertCell().innerHTML = membersArr[i].seniority;
+
+row.insertCell().innerHTML = membersArr[i].votes_with_party_pct;
+
+document.getElementById("tbody").append(row);
 
 }
-console.log(document.body.appendChild(table));
+}
+
+
+
+
 
 
 
