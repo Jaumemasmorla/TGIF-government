@@ -1,6 +1,6 @@
 
 
-const url ="https://api.propublica.org/congress/v1/116/senate/members.json"
+const url ="https://api.propublica.org/congress/v1/116/senate/members.json";
 
 fetch(url, {
   method: "GET",
