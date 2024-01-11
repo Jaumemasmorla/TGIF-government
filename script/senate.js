@@ -6,6 +6,8 @@ const parties = {
     ID: 'Independent'
   }
 
+
+
 /* para dropdown import {string} from './holamundo.mjs'
 console.log(string) y  (en el fichero donde esta la informacion) export const  string ="hola mundo"*/
 
