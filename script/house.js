@@ -15,7 +15,7 @@ fetch(url, {
 .then(json => {
     houseMembersArray = json.results[0].members;
     buildTable(houseMembersArray);
-    filteredTable();
+    filteredTable();``
 
 }
      ); 

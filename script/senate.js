@@ -97,7 +97,7 @@ const parties = {
           (dropdown.value === '' || dropdown.value.includes(member.state ))
         )
       });
-      buildTable(filteredMembers);/*cambiar el filtro de esta funcion para que coja tambien el dropdown?*/
+      buildTable(filteredMembers);
     }
     
   };
