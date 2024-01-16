@@ -1,6 +1,6 @@
-
-
+import {states} from './states.mjs';
 let membersArr;
+let filteredMembers;
 
 const url ="https://api.propublica.org/congress/v1/116/senate/members.json";
 
@@ -14,6 +14,7 @@ fetch(url, {
    
     buildTable(membersArr)
     filteredTable();
+
 }
     
 ); 
@@ -86,21 +87,46 @@ const parties = {
  
   function filteredTable() {
     let checkboxes = document.querySelectorAll("input[type=checkbox]:checked");
-    if(checkboxes.length === 0){
+    if(checkboxes.length === 0 && dropdown.value === ''){
       buildTable(membersArr);
     }else {
       let selectedParties = Array.from(checkboxes).map((checkbox) => checkbox.value);
-      let filteredMembers = membersArr.filter((member) => selectedParties.includes(member.party));
-      buildTable(filteredMembers);
+      let filteredMembers = membersArr.filter((member) => {
+        return (
+          (selectedParties.length === 0 || selectedParties.includes(member.party)) &&
+          (dropdown.value === '' || dropdown.value.includes(member.state ))
+        )
+      });
+      buildTable(filteredMembers);/*cambiar el filtro de esta funcion para que coja tambien el dropdown?*/
     }
     
   };
   
   /* Dropdown*/
-/* para dropdown import {string} from './holamundo.mjs'
-console.log(string) y  (en el fichero donde esta la informacion) export const  string ="hola mundo"*/
-   
-   
+  
+let dropdown = document.createElement('select');
+
+let dropdownDefaultOption = document.createElement('option');
+dropdownDefaultOption.text = 'All states';
+dropdownDefaultOption.value = '';
+dropdown.appendChild(dropdownDefaultOption);
+
+let dropdownEntries = Object.values(states);
+
+dropdownEntries.forEach(value =>{
+  let dropdownOption = document.createElement('option');
+  
+  dropdownOption.text = value;
+  dropdownOption.value = value;
+  dropdown.addEventListener('change', filteredTable);
+  dropdown.appendChild(dropdownOption);
+}
+ 
+);
+
+document.getElementById('dropdown-container').appendChild(dropdown);
+
+
 
 
 
