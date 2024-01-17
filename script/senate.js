@@ -1,8 +1,29 @@
 import {states} from './states.mjs';
 let membersArr;
 let filteredMembers;
+let chamber = 'senate';
 
-const url ="https://api.propublica.org/congress/v1/116/senate/members.json";
+let params = new URL(window.location).searchParams;
+
+if (params.has('chamber')){
+  let urlChamber = params.get('chamber');
+  if (urlChamber === 'house'){
+    chamber ='house';
+  }
+}
+
+
+const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`;
+
+if(chamber === 'senate'){
+  document.title = 'Senate';
+  document.querySelector('h1').textContent = 'Senators';
+
+
+}else{
+  document.title = 'House';
+  document.querySelector('h1').textContent = 'representatives';
+}
 
 fetch(url, {
   method: "GET",
