@@ -1,11 +1,27 @@
 import {states} from './states.mjs';
-
-let houseMembersArray;
+let membersArr;
 let filteredMembers;
 
+const currentURL = window.location.href;
+export const changeChamber = () => {
 
+ 
 
-const url ="https://api.propublica.org/congress/v1/116/house/members.json"
+  if (currentURL.includes("house")) {
+    const newH1 = document.createElement('h1');
+    newH1.textContent = 'Congressmen';
+    document.getElementById('container-title').appendChild(newH1);
+  } else if (currentURL.includes("senate")) {
+    const newH1 = document.createElement('h1');
+    newH1.textContent = 'Senators';
+    document.getElementById('title-container').appendChild(newH1);
+  }
+}
+changeChamber();
+
+let  chamber = currentURL.includes('house') ? 'house' : 'senate';
+
+const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`
 
 fetch(url, {
   method: "GET",
@@ -13,12 +29,14 @@ fetch(url, {
 })
 .then(response => response.json()) 
 .then(json => {
-    houseMembersArray = json.results[0].members;
-    buildTable(houseMembersArray);
-    filteredTable();``
+    
+    membersArr = json.results[0].members;
+    buildTable(membersArr);
+    filteredTable();
+   
 
-}
-     ); 
+});
+
 
   document.getElementById('thead').innerHTML="";
 
@@ -31,29 +49,29 @@ fetch(url, {
     document.getElementById('thead').append(headersRow);
   }
 
-  function buildTable(houseMembersArray){
+  function buildTable(membersArr){
 
     document.getElementById('tbody').innerHTML="";
 
-    for(let i = 0; i < houseMembersArray.length; i++){
+    for(let i = 0; i < membersArr.length; i++){
 
       let row = document.createElement('tr');
 
       let link = document.createElement('a');
 
-      link.textContent = houseMembersArray[i].first_name + " " + (houseMembersArray[i].middle_name || "") + houseMembersArray[i].last_name;
+      link.textContent = membersArr[i].first_name + " " + (membersArr[i].middle_name || "") + membersArr[i].last_name;
 
-      link.setAttribute('href',houseMembersArray[i].url);
+      link.setAttribute('href',membersArr[i].url);
 
       row.insertCell().append(link);
 
-      row.insertCell().innerHTML = houseMembersArray[i].party;
+      row.insertCell().innerHTML = membersArr[i].party;
 
-      row.insertCell().innerHTML = houseMembersArray[i].state;
+      row.insertCell().innerHTML = membersArr[i].state;
 
-      row.insertCell().innerHTML = houseMembersArray[i].seniority;
+      row.insertCell().innerHTML = membersArr[i].seniority;
 
-      row.insertCell().innerHTML = houseMembersArray[i].votes_with_party_pct;
+      row.insertCell().innerHTML = membersArr[i].votes_with_party_pct;
 
       document.getElementById('tbody').append(row);
 
@@ -87,10 +105,10 @@ function filteredTable(){
   let checkboxes = document.querySelectorAll("input[type=checkbox]:checked");
 
   if(checkboxes.length === 0 && dropdown.value === ''){
-     buildTable(houseMembersArray)
+     buildTable(membersArr)
   }else{
     let selectedParties = Array.from(checkboxes).map((checkbox) => checkbox.value );
-    let filteredMembers = houseMembersArray.filter((member) => {
+    let filteredMembers = membersArr.filter((member) => {
       return ((selectedParties.length === 0 ||selectedParties.includes(member.party)) &&
       (dropdown.value === '' || dropdown.value.includes(member.state)))
     });

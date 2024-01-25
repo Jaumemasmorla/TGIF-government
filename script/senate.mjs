@@ -1,29 +1,32 @@
+
+
 import {states} from './states.mjs';
 let membersArr;
 let filteredMembers;
-let chamber = 'senate';
 
-let params = new URL(window.location).searchParams;
+const currentURL = window.location.href;
+export const changeChamber = () => {
 
-if (params.has('chamber')){
-  let urlChamber = params.get('chamber');
-  if (urlChamber === 'house'){
-    chamber ='house';
+ 
+
+  if (currentURL.includes("house")) {
+
+    const newH1 = document.createElement('h1');
+    newH1.textContent = 'Congressmen';
+    document.getElementById('container-title').appendChild(newH1);
+    
+  } else if (currentURL.includes("senate")) {
+
+    const newH1 = document.createElement('h1');
+    newH1.textContent = 'Senators';
+    document.getElementById('title-container').appendChild(newH1);
   }
 }
+changeChamber();
 
+let  chamber = currentURL.includes('house') ? 'house' : 'senate';
 
-const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`;
-
-if(chamber === 'senate'){
-  document.title = 'Senate';
-  document.querySelector('h1').textContent = 'Senators';
-
-
-}else{
-  document.title = 'House';
-  document.querySelector('h1').textContent = 'representatives';
-}
+const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`
 
 fetch(url, {
   method: "GET",
@@ -31,16 +34,16 @@ fetch(url, {
 })
 .then(response => response.json()) 
 .then(json => {
-    membersArr = json.results[0].members;
-   
-    buildTable(membersArr)
-    filteredTable();
-
-}
     
-); 
+    membersArr = json.results[0].members;
+    buildTable(membersArr);
+    filteredTable();
+   
 
-document.getElementById("thead").innerHTML ="";
+});
+
+
+document.getElementById("thead").textContent ="";
 
 let headers = ['Name', 'Affiliation', 'State', 'Years', 'Votes to Party'];
 
@@ -55,7 +58,7 @@ for (let i = 0; i < headers.length; i++){
 function buildTable(membersArr){
 
 
-document.getElementById("tbody").innerHTML = "";
+document.getElementById("tbody").textContent = "";
 for (let i = 0; i < membersArr.length; i++){
 
 let row = document.createElement('tr');
