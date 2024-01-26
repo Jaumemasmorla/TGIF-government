@@ -47,13 +47,14 @@ fetch( url, {
 function buildTable1(membersArr) {
   document.getElementById('tbody').innerHTML = '';
 
-  const democrats = membersArr.filter(member => member.party === 'D');
+  const democrats = membersArr.filter(member => member.party === 'D')
   const republicans = membersArr.filter(member => member.party === 'R');
   const independents = membersArr.filter(member => member.party === 'ID');
 
   const democratVotes = calculateAverageVote(democrats);
   const republicanVotes = calculateAverageVote(republicans);
   const independentVotes = calculateAverageVote(independents);
+  const average = (democratVotes + republicanVotes + independentVotes) / 3;
 
   for (let i = 0; i < 4; i++) {
     let row = document.createElement('tr');
@@ -76,7 +77,7 @@ function buildTable1(membersArr) {
     if (i === 3) {
       row.insertCell().innerHTML = 'Total';
       row.insertCell().innerHTML = democrats.length + republicans.length + independents.length;
-      row.insertCell().innerHTML = (democratVotes + republicanVotes + independentVotes) / 3 + '%';
+      row.insertCell().innerHTML = average.toFixed(2) + '%';
     }
     document.getElementById('tbody').append(row);
   }
@@ -87,7 +88,9 @@ function calculateAverageVote(members) {
     return 0; 
   }
 
-  return members.map(votes => votes["votes_with_party_pct"]).reduce((accumulator, currentValue) => (accumulator + currentValue), 0) / members.length;
+  let pctMembers =  members.map(votes => votes["votes_with_party_pct"]).reduce((accumulator, currentValue) => (accumulator + currentValue), 0) / members.length
+
+  return pctMembers.toFixed(2);
 }
 
 
@@ -101,7 +104,7 @@ for(let i = 0; i < membersArr.length; i++){
   link.setAttribute("href", membersArr[i].url);
   row.insertCell().append(link);
   row.insertCell().innerHTML= membersArr[i].total_votes;
-  row.insertCell().innerHTML = membersArr[i].votes_with_party_pct;
+  row.insertCell().innerHTML = membersArr[i].votes_with_party_pct + '%';
   document.getElementById('tbody2').append(row);
 }
 
@@ -118,7 +121,7 @@ for(let i = 0; i < membersArr.length; i++){
   link.setAttribute("href", membersArr[i].url);
   row.insertCell().append(link);
   row.insertCell().innerHTML= membersArr[i].total_votes;
-  row.insertCell().innerHTML = membersArr[i].votes_with_party_pct;
+  row.insertCell().innerHTML = membersArr[i].votes_with_party_pct + '%';
   document.getElementById('tbody3').append(row);
 }
 };
