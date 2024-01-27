@@ -1,8 +1,10 @@
 
+import { showSpinner, hideSpinner } from './spinner.mjs';
 
 let membersArr;
 let bottomAttendanceMembers;
 let topAttendanceMembers;
+ 
 
 const currentURL = window.location.href;
 export const changeChamber = () => {
@@ -21,6 +23,8 @@ changeChamber();
 
 let  chamber = currentURL.includes('house') ? 'house' : 'senate';
 
+showSpinner();
+
 const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`
 
 fetch( url, {
@@ -38,7 +42,7 @@ fetch( url, {
   const topAttendanceMembers = membersArr.sort((a, b)=> b.missed_votes - a.missed_votes).slice( -10);
 
   buildTable3(topAttendanceMembers);
-   
+   hideSpinner();
 });
 
 
@@ -51,9 +55,9 @@ function buildTable1(membersArr) {
   const republicans = membersArr.filter(member => member.party === 'R');
   const independents = membersArr.filter(member => member.party === 'ID');
 
-  const democratVotes = calculateAverageVote(democrats);
-  const republicanVotes = calculateAverageVote(republicans);
-  const independentVotes = calculateAverageVote(independents);
+  const democratVotes = calculateAverageVote(democrats, 'votes_with_party_pct');
+  const republicanVotes = calculateAverageVote(republicans, 'votes_with_party_pct');
+  const independentVotes = calculateAverageVote(independents, 'votes_with_party_pct');
   const average = (democratVotes + republicanVotes + independentVotes) / 3
 
   for (let i = 0; i < 4; i++) {
@@ -62,17 +66,17 @@ function buildTable1(membersArr) {
     if (i === 0) {
       row.insertCell().innerHTML = 'Democrats';
       row.insertCell().innerHTML = democrats.length;
-      row.insertCell().innerHTML = democratVotes + '%';
+      row.insertCell().innerHTML = democratVotes.toFixed(2) + '%';
     }
     if (i === 1) {
       row.insertCell().innerHTML = 'Republicans';
       row.insertCell().innerHTML = republicans.length;
-      row.insertCell().innerHTML = republicanVotes + '%';
+      row.insertCell().innerHTML = republicanVotes.toFixed(2) + '%';
     }
     if (i === 2) {
       row.insertCell().innerHTML = 'Independents';
       row.insertCell().innerHTML = independents.length;
-      row.insertCell().innerHTML = independentVotes + '%';
+      row.insertCell().innerHTML = independentVotes.toFixed(2) + '%';
     }
     if (i === 3) {
       row.insertCell().innerHTML = 'Total';
@@ -84,14 +88,17 @@ function buildTable1(membersArr) {
 
 }
 
-function calculateAverageVote(members) {
-  if (members.length === 0) {
+function calculateAverageVote(membersArr ) {
+  if (membersArr.length === 0) {
     return 0; 
   }
 
-  let pctMembers =  members.map(votes => votes["votes_with_party_pct"]).reduce((accumulator, currentValue) => (accumulator + currentValue), 0) / members.length;
+  let pctMembers =  membersArr
+  .filter(vote=> vote["votes_with_party_pct"] != undefined)
+  .map(vote => vote["votes_with_party_pct"])
+  .reduce((accumulator, currentValue) => (accumulator + currentValue), 0) / membersArr.length;
  
-  return pctMembers.toFixed(2);
+  return parseFloat(pctMembers.toFixed(2));
 }
 
 
@@ -121,8 +128,9 @@ for(let i = 0; i < membersArr.length; i++){
 
   link.setAttribute("href", membersArr[i].url);
   row.insertCell().append(link);
-  row.insertCell().innerHTML= membersArr[i].missed_votes;
-  row.insertCell().innerHTML = membersArr[i].missed_votes_pct + '%';
+  row.insertCell().innerHTML= membersArr[i].missed_votes || 0;
+  row.insertCell().innerHTML= (membersArr[i].missed_votes_pct !== null && membersArr[i].missed_votes_pct !== undefined) ?
+  membersArr[i].missed_votes_pct + '%' : '0%';
   document.getElementById('tbody3').append(row);
 }
 

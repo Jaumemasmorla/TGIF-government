@@ -1,4 +1,5 @@
 import {states} from './states.mjs';
+import { showSpinner, hideSpinner } from './spinner.mjs';
 let membersArr;
 let filteredMembers;
 
@@ -21,6 +22,8 @@ changeChamber();
 
 let  chamber = currentURL.includes('house') ? 'house' : 'senate';
 
+showSpinner();
+
 const url = `https://api.propublica.org/congress/v1/116/${chamber}/members.json`
 
 fetch(url, {
@@ -34,7 +37,7 @@ fetch(url, {
     buildTable(membersArr);
     filteredTable();
    
-
+  hideSpinner();
 });
 
 
@@ -88,6 +91,10 @@ fetch(url, {
   let entries = Object.entries(parties);
 
   
+  const tableContainer = document.getElementById('table-container');
+  const tableContainerHeight = tableContainer.offsetHeight;
+  
+  document.documentElement.style.setProperty('--table-container-height', `${tableContainerHeight}px`);
 
   let checkboxEntries = entries.map(([key, value]) => {
     let input = document.createElement('input');
